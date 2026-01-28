@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-
+import React from 'react';
+import './Delivery.css';
 
 function Delivery({ startingLatitude, startingLongitude, destLatitude, destLongitude, weight, drone, status }) {
 
-    const[deliveryStatus, setDeliveryStatus] = useState(status);
+    const canDeliver = status !== "DELIVERING" && status !== "DELIVERED";
+    const statusClass = `status-pill status-${String(status).toLowerCase().replace(' ', '-')}`;
 
     function handleDeliver() {
         const fetchDelivery = async () => {
             try{
-                console.log(drone)
                 const response = await fetch('http://localhost:8082/dronora/flight/deliver/' + drone );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                setDeliveryStatus("DELIVERED");
             } catch (error) {
                 console.error('Fetch error:', error);
             }
@@ -22,20 +21,27 @@ function Delivery({ startingLatitude, startingLongitude, destLatitude, destLongi
     };
 
     return (
-        <div className=''>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginTop: '20px', marginLeft: '10px'}}>
-                <p className=''>Starting Latitude: {startingLatitude}</p>
-                <p className=''>Starting Longitude: {startingLongitude}</p>
-                <p className=''>Destination Latitude: {destLatitude}</p>
-                <p className=''>Destination Longitude: {destLongitude}</p>
-                <p className=''>Weight: {weight}</p>
-                <p className=''>Drone: {drone}</p>
-                <p className=''>Status: {deliveryStatus}</p>
-
-                <button id="submit" onClick={handleDeliver}>Deliver</button>
-
+        <div className="delivery-card">
+            <div className="delivery-header">
+                <div>
+                    <h3>Drone {drone}</h3>
+                    <p className="muted">Payload {weight} kg</p>
+                </div>
+                <span className={statusClass}>{status}</span>
             </div>
-
+            <div className="delivery-grid">
+                <div>
+                    <p className="label">From</p>
+                    <p>{startingLatitude}, {startingLongitude}</p>
+                </div>
+                <div>
+                    <p className="label">To</p>
+                    <p>{destLatitude}, {destLongitude}</p>
+                </div>
+            </div>
+            <button className="action-btn" onClick={handleDeliver} disabled={!canDeliver}>
+                {canDeliver ? "Start delivery" : "In progress"}
+            </button>
         </div>
     );
 }

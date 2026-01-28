@@ -1,7 +1,6 @@
 package com.ozanthongtomi.drones.service;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import com.ozanthongtomi.drones.helper.Helper;
 import com.ozanthongtomi.drones.model.Drone;
@@ -87,33 +86,47 @@ public class FlightService {
     };
 
     public void changeDroneStatus(Long id, String name, int capacity, String status) {
-        String uri = "http://localhost:8082/dronora/drones/" + id.toString();
-        RestTemplate restTemplate = new RestTemplate();
-
-        NewDroneRequest updatedDroneRequest;
-        // Create a NewDroneRequest object with the desired status
-        if(status == "AVAILABLE") {
-            updatedDroneRequest = new NewDroneRequest(id, name, capacity, "UNAVAILABLE");
-        } else {
-            updatedDroneRequest = new NewDroneRequest(id, name, capacity, "AVAILABLE");
-        }
-        System.out.println(updatedDroneRequest);
-        // Make the PUT request
-        restTemplate.put(uri, updatedDroneRequest);
-        
+        String nextStatus = "AVAILABLE".equals(status) ? "UNAVAILABLE" : "AVAILABLE";
+        Drone updated = new Drone(id, name, capacity, nextStatus);
+        droneService.updateDrone(updated);
+        System.out.println(new NewDroneRequest(id, name, capacity, nextStatus));
     };
 
+    private void setDroneStatus(Long id, String status) {
+        Optional<Drone> drone = droneService.getDroneById(id);
+        if (drone.isPresent()) {
+            Drone updated = drone.get();
+            updated.setStatus(status);
+            droneService.updateDrone(updated);
+        }
+    }
+
     public void commandFly(Long id) {
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            Optional<Flight> flight = flightRepository.findById(id);
+            if (flight.isPresent()) {
+                Flight updating = flight.get();
+                updating.setStatus("DELIVERING");
+                flightRepository.save(updating);
+            }
+
             for (int i = 1; i < 5; i++){
                 try{
                     Thread.sleep(3000);
-
+                    System.out.println(deliver(id, i));
                 } catch (InterruptedException e) {
-                    System.err.println("Interrumped: " + e.getMessage());
+                    System.err.println("Interrupted: " + e.getMessage());
+                } catch (Exception ex) {
+                    System.err.println("Deliver error: " + ex.getMessage());
                 }
-                System.out.println(deliver(id, i));
             }
+
+            Optional<Flight> finished = flightRepository.findById(id);
+            if (finished.isPresent()) {
+                Flight updating = finished.get();
+                updating.setStatus("DELIVERED");
+                flightRepository.save(updating);
+            }
+            setDroneStatus(id, "AVAILABLE");
     }
 
     public String deliver(Long id, int deliverStatus) {
@@ -124,4 +137,3 @@ public class FlightService {
             return response;
     }   
 }
-

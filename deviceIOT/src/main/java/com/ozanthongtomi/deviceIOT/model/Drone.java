@@ -3,7 +3,6 @@ package com.ozanthongtomi.deviceIOT.model;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Value;
 import jakarta.validation.constraints.*;
-import lombok.*;
 import org.springframework.web.client.RestTemplate;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -13,10 +12,9 @@ import org.springframework.stereotype.Component; // For @Component
 import org.springframework.beans.factory.annotation.Autowired; // For @Autowired
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import jakarta.annotation.PreDestroy;
 
 @Component
-@Getter
-@Setter
 public class Drone {
     private Long id;
     private String name;
@@ -49,10 +47,10 @@ public class Drone {
         System.out.println(this);
         // Make the PUT request
         JSONObject droneJSON = new JSONObject();
-        droneJSON.put("id", this.getId());
-        droneJSON.put("name", this.getName());
-        droneJSON.put("capacity", this.getCapacity());
-        droneJSON.put("status", this.getStatus());
+        droneJSON.put("id", this.id);
+        droneJSON.put("name", this.name);
+        droneJSON.put("capacity", this.capacity);
+        droneJSON.put("status", this.status);
 
 
         String requestBody = droneJSON.toString();
@@ -75,4 +73,68 @@ public class Drone {
         
         
     };
+
+    @PreDestroy
+    public void onShutdown() {
+        try {
+            markOffline();
+        } catch (Exception ex) {
+            System.out.println("Failed to mark drone offline on shutdown: " + ex.getMessage());
+        }
+    }
+
+    private void markOffline() {
+        String uri = "http://localhost:8082/dronora/drones/" + this.id;
+        RestTemplate restTemplate = new RestTemplate();
+
+        JSONObject droneJSON = new JSONObject();
+        droneJSON.put("name", this.name);
+        droneJSON.put("capacity", this.capacity);
+        droneJSON.put("status", "OFFLINE");
+
+        String requestBody = droneJSON.toString();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        restTemplate.put(uri, requestEntity);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Drone{id=" + id + ", name='" + name + "', capacity=" + capacity + ", status='" + status + "'}";
+    }
 }

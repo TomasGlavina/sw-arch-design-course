@@ -1,5 +1,5 @@
-/home/tglavina/School-Projects/Sof-Arch/drones-transportation/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/model/Drone.java
-/home/tglavina/School-Projects/Sof-Arch/drones-transportation/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/controller/FlightController.java
-/home/tglavina/School-Projects/Sof-Arch/drones-transportation/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/DeviceIotApplication.java
-/home/tglavina/School-Projects/Sof-Arch/drones-transportation/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/config/RestTemplateConfig.java
-/home/tglavina/School-Projects/Sof-Arch/drones-transportation/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/service/FlightCommander.java
+/home/tglavina/projects/dronora/sw-arch-design-course/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/DeviceIotApplication.java
+/home/tglavina/projects/dronora/sw-arch-design-course/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/service/FlightCommander.java
+/home/tglavina/projects/dronora/sw-arch-design-course/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/config/RestTemplateConfig.java
+/home/tglavina/projects/dronora/sw-arch-design-course/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/model/Drone.java
+/home/tglavina/projects/dronora/sw-arch-design-course/deviceIOT/src/main/java/com/ozanthongtomi/deviceIOT/controller/FlightController.java

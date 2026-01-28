@@ -10,11 +10,13 @@ function App() {
       <header className="App-header">
         <Router>
           <Sidebar />
-          <Routes>
-            <Route path="/" element={<DronePage />} />
-            <Route path="/drones" element={<DronePage />} />
-            <Route path="/deliveries" element={<DeliveryPage />} />
-          </Routes>
+          <main className="main">
+            <Routes>
+              <Route path="/" element={<DronePage />} />
+              <Route path="/drones" element={<DronePage />} />
+              <Route path="/deliveries" element={<DeliveryPage />} />
+            </Routes>
+          </main>
         </Router>
       </header>
     </div>

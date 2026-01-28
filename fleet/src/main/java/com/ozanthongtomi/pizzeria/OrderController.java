@@ -1,11 +1,12 @@
 package com.ozanthongtomi.pizzeria;
 
-import com.ozanthongtomi.drones.model.NewFlightRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3001/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RequestMapping("/dronepizza")
 public class OrderController {
 
@@ -13,8 +14,11 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/pizzaorders")
-    public void placeOrder(@RequestBody NewFlightRequest order) {
-        // Process the order and send it to the server
-        orderService.processOrder(order);
+    public ResponseEntity<?> placeOrder(@RequestBody OrderRequest order) {
+        try {
+            return ResponseEntity.ok(orderService.processOrder(order));
+        } catch (OrderException ex) {
+            return ResponseEntity.status(ex.getStatus()).body(Map.of("error", ex.getMessage()));
+        }
     }
 }
